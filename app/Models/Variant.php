@@ -10,4 +10,7 @@ class Variant extends Model
         'title', 'description'
     ];
 
+    public function product () {
+        return $this->belongsToMany(Product::class, 'product_id');
+    }
 }
