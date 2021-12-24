@@ -7,6 +7,7 @@ use App\Models\ProductVariant;
 use App\Models\ProductVariantPrice;
 use App\Models\Variant;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class ProductController extends Controller
 {
@@ -49,6 +50,18 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
+        Log::debug($request->all());
+        // store product, product variants and product variants prices from request all
+        $product = Product::create($request->all());
+        foreach ($request->product_variant as $variant) {
+            $variantModel = Variant::findorFail($variant['option']);
+            
+            foreach ($variant['tags'] as $tag) {
+                $product->variants()->attach($variantModel, ['variant' => $tag]);
+            }
+
+        }
+
 
     }
 
