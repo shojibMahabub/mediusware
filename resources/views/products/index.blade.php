@@ -14,8 +14,11 @@
                     <input type="text" name="title" placeholder="Product Title" class="form-control">
                 </div>
                 <div class="col-md-2">
-                    <select name="variant" id="" class="form-control">
 
+                    <select name="variant" id="" class="form-control">
+                        @foreach($variants as $variant)
+                            <option value="{{$variant->variant}}">{{$variant->variant}}</option>
+                        @endforeach
                     </select>
                 </div>
 
@@ -59,7 +62,7 @@
                             <td>{{$product['title']}} <br> Created at : {{$product['created_at']}}</td>
                             <td>{{$product['description']}}</td>
                             <td>
-                                <dl class="row mb-0" style="height: 80px; overflow: hidden" id="variant">
+                                <dl class="row mb-0" style="height: 80px; overflow: hidden" id="varient-{{$product['id']}}">
 
                                     @foreach ( $product->variants_prices_with_variants as $variant )
                                         <dt class="col-sm-3 pb-0">
@@ -74,7 +77,7 @@
                                     @endforeach
   
                                 </dl>
-                                <button onclick="$('#variant').toggleClass('h-auto')" class="btn btn-sm btn-link">Show more</button>
+                                <button onclick="$('#varient-{{$product['id']}}').toggleClass('h-auto')" class="btn btn-sm btn-link">Show more</button>
                             </td>
                             <td>
                                 <div class="btn-group btn-group-sm">
