@@ -14,6 +14,18 @@ use Illuminate\Database\Eloquent\Model;
         return $this->hasMany(ProductVariantPrice::class, 'product_id')->with('color', 'size', 'style');
     }
 
+    // function to get variants from product
+    public function variants()
+    {
+        return $this->belongsToMany(Variant::class, 'product_variants');
+    }
+
+    // implement function vatiant prices from controller
+    public function variants_prices()
+    {
+        return $this->hasMany(ProductVariantPrice::class, 'product_id');
+    }
+    
     public function scopeFilter($query, $filters)
     {
         if (isset($filters['title'])) {
