@@ -26,6 +26,48 @@ use Illuminate\Database\Eloquent\Model;
         return $this->hasMany(ProductVariantPrice::class, 'product_id');
     }
     
+    public function createProductVariantPriceNow($request)
+    {
+
+        $product = Product::create($request);
+
+        $product = $this->attachVariant($product, (object) $request);
+
+        $product = $this->attachStockPrice($product, (object) $request);
+
+        return $product;
+    
+    }
+
+    public function attachStockPrice($product, $request)
+    {
+        foreach ($request->product_variant_prices as $price) {
+            $productVariantPrice = new ProductVariantPrice();
+            $productVariantPrice->product_id = $product->id;
+            $productVariantPrice->product_variant_one = $request->product_variant[0]['option'] ?? null;
+            $productVariantPrice->product_variant_two = $request->product_variant[1]['option'] ?? null;
+            $productVariantPrice->product_variant_three = $request->product_variant[2]['option'] ?? null;
+            $productVariantPrice->price = $price['price'];
+            $productVariantPrice->stock = $price['stock'];
+            $productVariantPrice->save();
+        }  
+        
+        return $product;
+    }
+
+    public function attachVariant($product, $request)
+    {
+
+        foreach ($request->product_variant as $variant) {
+            $variantModel = Variant::findorFail($variant['option']);
+            foreach ($variant['tags'] as $tag) {
+                $product->variants()->attach($variantModel, ['variant' => $tag]);
+            }
+        }
+        return $product;
+    
+    }
+
     public function scopeFilter($query, $filters)
     {
         if (isset($filters['title'])) {
@@ -35,18 +77,6 @@ use Illuminate\Database\Eloquent\Model;
         if (isset($filters['date'])) {
             $query->where('created_at', 'like', '%' . $filters['date'] . '%');
         } 
-
-        // if (isset($filters['variant'])) {
-        //     $query->whereHas('variants', function ($q) use ($filters) {
-        //         $q->where('title', 'like', '%' . $filters['variant'] . '%');
-        //     });
-        // }
-
-        // if (isset($filters['price_from']) && isset($filters['price_to'])) {
-        //     $query->whereHas('variants_prices_with_variants', function ($q) use ($filters) {
-        //         $q->whereBetween('price', [$filters['price_from'], $filters['price_to']]);
-        //     });
-        // }
     }
 
 }
