@@ -18,8 +18,16 @@ class ProductController extends Controller
     public function index()
     {
 
-        $products = Product::with('variants_prices_with_variants')->paginate(2);
-        return view('products.index', compact('products'));
+        $filters = request()->only(['title', 'variant', 'price_from', 'price_to', 'date']);
+        $variants = ProductVariant::select('variant')->groupBy('variant')->get();
+
+        if ($filters) 
+            $products = Product::with('variants_prices_with_variants')->filter($filters)->paginate(2);
+        else 
+            $products = Product::with('variants_prices_with_variants')->paginate(2);
+        
+
+        return view('products.index', compact('products', 'variants'));
     }
 
     /**
@@ -78,7 +86,7 @@ class ProductController extends Controller
     public function update(Request $request, Product $product)
     {
         //
-    }
+    } 
 
     /**
      * Remove the specified resource from storage.
