@@ -51,16 +51,38 @@ class ProductController extends Controller
     public function store(Request $request)
     {
         Log::debug($request->all());
-        // store product, product variants and product variants prices from request all
-        $product = Product::create($request->all());
-        foreach ($request->product_variant as $variant) {
-            $variantModel = Variant::findorFail($variant['option']);
-            
-            foreach ($variant['tags'] as $tag) {
-                $product->variants()->attach($variantModel, ['variant' => $tag]);
-            }
 
-        }
+
+        $product = new Product();
+        $product = $product->createProductVariantPriceNow($request->all());
+
+        Log::debug($product);
+        Log::debug('hello');
+
+        // // create a product instance
+        // $product = Product::create($request->all());
+        // foreach ($request->product_variant as $variant) {
+
+        //     // Find variant by id
+        //     $variantModel = Variant::findorFail($variant['option']);
+        //     // attach variant to product
+        //     foreach ($variant['tags'] as $tag) {
+        //         $product->variants()->attach($variantModel, ['variant' => $tag]);
+        //     }
+        // }
+
+        // foreach ($request->product_variant_prices as $price) {
+        //     // Log::debug($price);
+        //     $productVariantPrice = new ProductVariantPrice();
+        //     $productVariantPrice->product_id = $product->id;
+        //     $productVariantPrice->product_variant_one = $request->product_variant[0]['option'] ?? null;
+        //     $productVariantPrice->product_variant_two = $request->product_variant[1]['option'] ?? null;
+        //     $productVariantPrice->product_variant_three = $request->product_variant[2]['option'] ?? null;
+        //     $productVariantPrice->price = $price['price'];
+        //     $productVariantPrice->stock = $price['stock'];
+        //     $productVariantPrice->save();
+        // }
+
 
 
     }
